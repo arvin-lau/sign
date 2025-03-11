@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"errors"
-	"github.com/arvin-lau/sign/kmservice/types"
+	"github.com/arvin-lau/sign/signature/kmservice/types"
 	zlog "github.com/rs/zerolog/log"
 	"github.com/smallnest/rpcx/client"
 )
