@@ -1,25 +1,26 @@
 package evm
 
 import (
-	"crypto/ecdsa"
-	kmServiceCli "github.com/arvin-lau/sign/kmservice/client"
+	"fmt"
+	kmserviceCli "github.com/arvin-lau/sign/signature/kmservice/client"
+	kmserviceType "github.com/arvin-lau/sign/signature/kmservice/types"
+	mpcCli "github.com/arvin-lau/sign/signature/mpcSign/client"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
 )
 
-func SignTx(tx *types.Transaction, s types.Signer, prv *ecdsa.PrivateKey) (*types.Transaction, error) {
-	//signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+func SignTx(tx *types.Transaction, s types.Signer, signType string, orderId string, coinType uint32, addressIdx uint32, wid uint32) (signedTx *types.Transaction, err error) {
 	h := s.Hash(tx)
-	kmCli := kmServiceCli.GetKmClient()
-	//sig, err := kmCli.SignHash(wid, chain.GetCoinTypeByChainName(chainName), addressIdx, h.Bytes())
-	sig, err := kmCli.SignHash(wid, kmserviceType.CoinType(coinType), addressIdx, h.Bytes())
-	if err != nil {
-		return nil, err
+	sig := make([]byte, 0)
+	switch signType {
+	case SignByKmservice:
+		kmCli := kmserviceCli.GetKmClient()
+		sig, err = kmCli.SignHash(wid, kmserviceType.CoinType(coinType), addressIdx, h.Bytes())
+	case SignByMpc:
+		kmCli := mpcCli.GetKmClient()
+		sig, err = kmCli.SignHash(orderId, h.Bytes())
+	default:
+		return nil, fmt.Errorf("%v signType not support", signType)
 	}
-	sig, err := crypto.Sign(h[:], prv)
 	if err != nil {
 		return nil, err
 	}
