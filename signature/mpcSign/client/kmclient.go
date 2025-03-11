@@ -4,8 +4,8 @@ package client
 var mpcSignClient *MpcSignClient
 
 // InitMpcSignClient 初始化服务器
-func InitMpcSignClient(server []string) error {
-	mpcSignClient = NewMpcSignClient(server)
+func InitMpcSignClient(server []string, token string) error {
+	mpcSignClient = NewMpcSignClient(server, token)
 	return nil
 }
 

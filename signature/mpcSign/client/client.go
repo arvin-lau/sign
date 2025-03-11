@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"errors"
-	"extransfer/pkg/mpcSign/types"
+	"github.com/arvin-lau/sign/signature/mpcSign/types"
 	zlog "github.com/rs/zerolog/log"
 	"github.com/smallnest/rpcx/client"
 	"time"
@@ -15,7 +15,7 @@ type MpcSignClient struct {
 }
 
 // NewMpcSignClient 初始化服务器
-func NewMpcSignClient(server []string) *MpcSignClient {
+func NewMpcSignClient(server []string, token string) *MpcSignClient {
 	kbpair := []*client.KVPair{}
 	for _, s := range server {
 		kbpair = append(kbpair, &client.KVPair{
@@ -24,7 +24,7 @@ func NewMpcSignClient(server []string) *MpcSignClient {
 	}
 	d, _ := client.NewMultipleServersDiscovery(kbpair)
 	xclient := client.NewXClient("Arith", client.Failover, client.RandomSelect, d, client.DefaultOption)
-	xclient.Auth("bearer tGzv3JOkF0XG5Qx2TlKWIA")
+	xclient.Auth(token)
 	return &MpcSignClient{
 		server:  server,
 		xclient: xclient,
