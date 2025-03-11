@@ -1,4 +1,4 @@
-module github.com/arvin-lau/sign/kmservice
+module github.com/arvin-lau/sign/signature
 
 go 1.23.4
 
