@@ -3,6 +3,7 @@ package evm
 import (
 	"context"
 	"fmt"
+	"github.com/arvin-lau/sign"
 	kmservice "github.com/arvin-lau/sign/signature/kmservice/client"
 	mpc "github.com/arvin-lau/sign/signature/mpcSign/client"
 	"github.com/ethereum/go-ethereum/common"
@@ -22,28 +23,38 @@ func TestSignTx(t *testing.T) {
 	}
 
 	fromAddress := common.HexToAddress("0xa83114A443dA1CecEFC50368531cACE9F37fCCcb")
+	toAddress := common.HexToAddress("0x4592d8f8d7b001e72cb26a73e4fa1806a51ac79d")
+	value := big.NewInt(1000000000000000000) // in wei (1 eth)
+	var data []byte
 	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	value := big.NewInt(1000000000000000000) // in wei (1 eth)
-	gasLimit := uint64(21000)                // in units
+	gasLimit := uint64(21000) // in units
 	gasPrice, err := client.SuggestGasPrice(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	toAddress := common.HexToAddress("0x4592d8f8d7b001e72cb26a73e4fa1806a51ac79d")
-	var data []byte
-	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, data)
-
 	chainID, err := client.NetworkID(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
+	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, data)
 
-	signedTx, err := SignTx(tx, types.NewEIP155Signer(chainID), SignByKmservice, "", uint32(0x8000003c), 1, 0)
+	//eip 1559
+	//inner := &types.DynamicFeeTx{
+	//	ChainID:   chainID,
+	//	Nonce:     nonce,
+	//	GasTipCap: gasPrice,
+	//	GasFeeCap: gasFeeCap,
+	//	Gas:       gasLimit,
+	//	To:        &toAddress,
+	//	Value:     value,
+	//	Data:      data,
+	//}
+	//tx := types.NewTx(inner)
+
+	signedTx, err := SignTx(tx, types.NewEIP155Signer(chainID), sign.SignByKmservice, "", uint32(0x8000003c), 1, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,3 +66,18 @@ func TestSignTx(t *testing.T) {
 
 	fmt.Printf("tx sent: %s", signedTx.Hash().Hex())
 }
+
+//func a() {
+//	inner := &types.DynamicFeeTx{
+//		ChainID:   chainId,
+//		Nonce:     nonce,
+//		GasTipCap: gasPrice,
+//		GasFeeCap: gasFeeCap,
+//		Gas:       200000000,
+//		To:        &toAddress,
+//		Value:     big.NewInt(1),
+//	}
+//	fromAddress, privateKey, _ := utils.GetAddress(fromAddrIndex)
+//	fmt.Println("fromAddress: ", fromAddress)
+//	unsignTx := types.NewTx(inner)
+//}
