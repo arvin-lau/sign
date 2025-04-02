@@ -1,4 +1,4 @@
-package sign
+package signature
 
 const (
 	SignByKmservice = "kmservice"

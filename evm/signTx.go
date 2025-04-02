@@ -2,7 +2,6 @@ package evm
 
 import (
 	"fmt"
-	"github.com/arvin-lau/sign"
 	kmserviceCli "github.com/arvin-lau/sign/signature/kmservice/client"
 	kmserviceType "github.com/arvin-lau/sign/signature/kmservice/types"
 	mpcCli "github.com/arvin-lau/sign/signature/mpcSign/client"
@@ -13,10 +12,10 @@ func SignTx(tx *types.Transaction, s types.Signer, signType string, orderId stri
 	h := s.Hash(tx)
 	sig := make([]byte, 0)
 	switch signType {
-	case sign.SignByKmservice:
+	case signature.SignByKmservice:
 		kmCli := kmserviceCli.GetKmClient()
 		sig, err = kmCli.SignHash(wid, kmserviceType.CoinType(coinType), addressIdx, h.Bytes())
-	case sign.SignByMpc:
+	case signature.SignByMpc:
 		kmCli := mpcCli.GetKmClient()
 		sig, err = kmCli.SignHash(orderId, h.Bytes())
 	default:
