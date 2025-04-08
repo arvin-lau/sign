@@ -3,7 +3,7 @@ package evm
 import (
 	"context"
 	"fmt"
-	"github.com/arvin-lau/sign"
+	"github.com/arvin-lau/sign/signature"
 	kmservice "github.com/arvin-lau/sign/signature/kmservice/client"
 	mpc "github.com/arvin-lau/sign/signature/mpcSign/client"
 	"github.com/ethereum/go-ethereum/common"
@@ -54,7 +54,7 @@ func TestSignTx(t *testing.T) {
 	//}
 	//tx := types.NewTx(inner)
 
-	signedTx, err := SignTx(tx, types.NewEIP155Signer(chainID), sign.SignByKmservice, "", uint32(0x8000003c), 1, 0)
+	signedTx, err := SignTx(tx, types.NewEIP155Signer(chainID), signature.SignByKmservice, "", uint32(0x8000003c), 1, 0)
 	if err != nil {
 		log.Fatal(err)
 	}

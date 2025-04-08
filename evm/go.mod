@@ -3,8 +3,7 @@ module github.com/arvin-lau/sign/evm
 go 1.23.4
 
 require (
-	github.com/arvin-lau/sign v0.0.0-20250402075619-e97c16c8167b
-	github.com/arvin-lau/sign/signature v0.0.0-20250402075619-e97c16c8167b
+	github.com/arvin-lau/sign/signature v0.0.0-20250402083119-567c77758ac6
 	github.com/ethereum/go-ethereum v1.15.5
 )
 

@@ -2,6 +2,7 @@ package evm
 
 import (
 	"fmt"
+	"github.com/arvin-lau/sign/signature"
 	kmserviceCli "github.com/arvin-lau/sign/signature/kmservice/client"
 	kmserviceType "github.com/arvin-lau/sign/signature/kmservice/types"
 	mpcCli "github.com/arvin-lau/sign/signature/mpcSign/client"
