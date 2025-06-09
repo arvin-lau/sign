@@ -31,28 +31,40 @@ func TestSignTx(t *testing.T) {
 		log.Fatal(err)
 	}
 	gasLimit := uint64(21000) // in units
-	gasPrice, err := client.SuggestGasPrice(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
+
 	chainID, err := client.NetworkID(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
-	tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, data)
 
-	//eip 1559
-	//inner := &types.DynamicFeeTx{
-	//	ChainID:   chainID,
-	//	Nonce:     nonce,
-	//	GasTipCap: gasPrice,
-	//	GasFeeCap: gasFeeCap,
-	//	Gas:       gasLimit,
-	//	To:        &toAddress,
-	//	Value:     value,
-	//	Data:      data,
+	//build transaction
+	//gasPrice, err := client.SuggestGasPrice(context.Background())
+	//if err != nil {
+	//	log.Fatal(err)
 	//}
-	//tx := types.NewTx(inner)
+	//tx := types.NewTransaction(nonce, toAddress, value, gasLimit, gasPrice, data)
+
+	//build eip1559 transaction
+	gasTipCap, err := client.SuggestGasTipCap(context.TODO())
+	if err != nil {
+		log.Fatal(err)
+	}
+	feeHistory, err := client.FeeHistory(context.TODO(), 1, nil, []float64{20, 60, 73})
+	if err != nil {
+		log.Fatal(err)
+	}
+	baseFee := feeHistory.BaseFee[0]
+	inner := &types.DynamicFeeTx{
+		ChainID:   chainID,
+		Nonce:     nonce,
+		GasTipCap: gasTipCap,
+		GasFeeCap: baseFee.Mul(baseFee, big.NewInt(2)).Add(baseFee, gasTipCap), //gasFeeCap = baseFee * 2 + gasTipCap
+		Gas:       gasLimit,
+		To:        &toAddress,
+		Value:     value,
+		Data:      data,
+	}
+	tx := types.NewTx(inner)
 
 	signedTx, err := SignTx(tx, types.NewEIP155Signer(chainID), signature.SignByKmservice, "", uint32(0x8000003c), 1, 0)
 	if err != nil {
